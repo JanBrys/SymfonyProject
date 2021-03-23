@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {# Run `composer require symfony/webpack-encore-bundle`
+       and uncomment the following Encore helpers to start using Symfony UX #}
+    {% block stylesheets %}
+        {#{{ encore_entry_link_tags('app') }}#}
+    {% endblock %}
+
+
+</head>
+<body>
+{% block body %}
+    <h1>Users list</h1>
+
+    <div class="allUsers">
+
+        <div class="editUser" style="display: none;">
+            <span class="editId"></span>
+            <input class="editName" type="text">
+            <input class="editEmail" type="text">
+            <input class="editGender" type="text">
+            <input class="editStatus" type="text">
+            <input class="editCreated" type="text">
+            <input class="editUpdated" type="text">
+            <button type="button" class="confirmButton"> confirm </button>
+        </div>
+
+        <table style="border-spacing: 15px">
+
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Status</th>
+                <th>Created at</th>
+                <th>Updated at</th>
+                <th>Edit</th>
+            </tr>
+
+            {% set i = 0 %}
+            {% for user in users %}
+            <tr class="rowData" id="{{ i }}">
+                <td class="userId">{{ user["id"] }}</td>
+                <td class="userName">{{ user["name"] }}</td>
+                <td class="userEmail">{{ user["email"] }}</td>
+                <td class="userGender">{{ user["gender"] }}</td>
+                <td class="userStatus">{{ user["status"] }}</td>
+                <td class="userCreated">{{ user["created_at"] }}</td>
+                <td class="userUpdated">{{ user["updated_at"] }}</td>
+                <td><button type="button" class="editButton">Click to edit</button></td>
+            </tr>
+                {% set i = i+1 %}
+            {% endfor%}
+
+        </table>
+
+    </div>
+
+{% endblock %}
+</body>
+</html>
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script>
+        $(".editButton").on("click",function(event){
+            let id = $(this).closest('tr').find('.userId').text();
+            let name = $(this).closest('tr').find('.userName').text();
+            let email = $(this).closest('tr').find('.userEmail').text();
+            let gender =  $(this).closest('tr').find('.userGender').text();
+            let status = $(this).closest('tr').find('.userStatus').text();
+            let created = $(this).closest('tr').find('.userCreated').text();
+            let updated = $(this).closest('tr').find('.userUpdated').text();
+
+            let editUserDiv =  $(this).closest('div').find('.editUser');
+
+            editUserDiv.find('.editId').text(id);
+            editUserDiv.find('.editName').val(name);
+            editUserDiv.find('.editEmail').val(email);
+            editUserDiv.find('.editGender').val(gender);
+            editUserDiv.find('.editStatus').val(status);
+            editUserDiv.find('.editCreated').val(created);
+            editUserDiv.find('.editUpdated').val(updated);
+
+            editUserDiv.show();
+        });
+
+        $(".confirmButton").on("click",function(event){
+            let editUserDiv =  $(this).closest('div');
+
+            let id = $(this).closest('div').find('.editId').text();
+            let name = $(this).closest('div').find('.editName').val();
+            let email = $(this).closest('div').find('.editEmail').val();
+            let gender =  $(this).closest('div').find('.editGender').val();
+            let status = $(this).closest('div').find('.editStatus').val();
+            let created = $(this).closest('div').find('.editCreated').val();
+            let updated = $(this).closest('div').find('.editUpdated').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/ajax",
+                dataType: "json",
+                data: {
+                    id: id,
+                    name: name,
+                    email: email,
+                    gender: gender,
+                    status: status,
+                    created: created,
+                    updated: updated,
+                },
+                    success: function(data, status) {
+                        dataRow = editUserDiv.parent().find('tr').next().toArray()
+
+                        for(var i=0;i<dataRow.length;i++)
+                        {
+                            if(data['id']==(dataRow[i].children[0].innerText))
+                            {
+                               dataRow[i].children[1].innerText = data['name'];
+                               dataRow[i].children[2].innerText = data['email'];
+                               dataRow[i].children[3].innerText = data['gender'];
+                               dataRow[i].children[4].innerText = data['status'];
+                               dataRow[i].children[5].innerText = data['created_at'];
+                               dataRow[i].children[6].innerText = data['updated_at'];
+                            }
+
+                        }
+                    },
+                    error : function(xhr, textStatus, errorThrown) {
+                        alert('Ajax request failed.');
+                    }
+            });
+            editUserDiv.hide();
+        });
+    </script>
+
+{% endblock %}
