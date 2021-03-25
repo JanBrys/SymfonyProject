@@ -16,7 +16,6 @@
         <input type="text" class="searchInput" placeholder="type here to search by name" >
     </div>
     <div class="allUsers">
-
         <div class="editUser" style="display: none;">
             <span class="editId"></span>
             <input class="editName" type="text">
@@ -27,9 +26,7 @@
             <input class="editUpdated" type="text">
             <button type="button" class="confirmButton"> confirm </button>
         </div>
-
         <table style="border-spacing: 15px">
-
             <tr>
                 <th>Id</th>
                 <th>Name</th>
@@ -40,7 +37,6 @@
                 <th>Updated at</th>
                 <th>Edit</th>
             </tr>
-
             {% set i = 0 %}
             {% for user in users %}
             <tr class="rowData" id="{{ i }}">
@@ -55,15 +51,11 @@
             </tr>
                 {% set i = i+1 %}
             {% endfor%}
-
         </table>
-
     </div>
-
 {% endblock %}
 </body>
 </html>
-
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script>
@@ -85,13 +77,10 @@
             editUserDiv.find('.editStatus').val(status);
             editUserDiv.find('.editCreated').val(created);
             editUserDiv.find('.editUpdated').val(updated);
-
             editUserDiv.show();
         });
-
         $(".confirmButton").on("click",function(event){
             let editUserDiv =  $(this).closest('div');
-
             let id = $(this).closest('div').find('.editId').text();
             let name = $(this).closest('div').find('.editName').val();
             let email = $(this).closest('div').find('.editEmail').val();
@@ -99,7 +88,6 @@
             let status = $(this).closest('div').find('.editStatus').val();
             let created = $(this).closest('div').find('.editCreated').val();
             let updated = $(this).closest('div').find('.editUpdated').val();
-
             $.ajax({
                 type: "POST",
                 url: "/ajax",
@@ -115,7 +103,6 @@
                 },
                     success: function(data, status) {
                         dataRow = editUserDiv.parents().find('tr').next().toArray()
-
                         for(var i=0;i<dataRow.length;i++)
                         {
                             if(data['id']==(dataRow[i].children[0].innerText))
@@ -127,7 +114,6 @@
                                dataRow[i].children[5].innerText = data['created_at'];
                                dataRow[i].children[6].innerText = data['updated_at'];
                             }
-
                         }
                     },
                     error : function(xhr, textStatus, errorThrown) {
@@ -136,7 +122,6 @@
             });
             editUserDiv.hide();
         });
-
         $(".searchInput").keyup(function (event) {
             let arrayOfSuggestions = [];
             let arrayOfNoSuggested = [];
@@ -163,7 +148,5 @@
                 $('#'+arrayOfSuggestions[k]).show()
             }
         });
-
     </script>
-
 {% endblock %}

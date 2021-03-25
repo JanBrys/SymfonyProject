@@ -12,9 +12,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserController extends AbstractController
 {
-
-	private $users;
-
 	public function index(SessionInterface $session): Response
 	{
 		$client = HTTPClient::create();
@@ -52,8 +49,6 @@ class UserController extends AbstractController
 				}
 			}
 			return new JsonResponse($updatedUser);
-
-
 		}
 		throw new HttpException(400, "Update user is not valid.");
 	}
