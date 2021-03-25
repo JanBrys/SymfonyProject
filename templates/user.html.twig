@@ -8,13 +8,13 @@
     {% block stylesheets %}
         {#{{ encore_entry_link_tags('app') }}#}
     {% endblock %}
-
-
 </head>
 <body>
 {% block body %}
     <h1>Users list</h1>
-
+    <div class="findUser">
+        <input type="text" class="searchInput" placeholder="type here to search by name" >
+    </div>
     <div class="allUsers">
 
         <div class="editUser" style="display: none;">
@@ -114,7 +114,7 @@
                     updated: updated,
                 },
                     success: function(data, status) {
-                        dataRow = editUserDiv.parent().find('tr').next().toArray()
+                        dataRow = editUserDiv.parents().find('tr').next().toArray()
 
                         for(var i=0;i<dataRow.length;i++)
                         {
@@ -136,6 +136,34 @@
             });
             editUserDiv.hide();
         });
+
+        $(".searchInput").keyup(function (event) {
+            let arrayOfSuggestions = [];
+            let arrayOfNoSuggested = [];
+            let value = $(this).val()
+            let dataRow = $(this).parents().find('.rowData')
+            let dataRowArray = dataRow.toArray();
+            for(var i=0;i<dataRowArray.length;i++)
+            {
+                if(!dataRowArray[i].children[1].innerText.toLowerCase().includes(value.toLowerCase()))
+                {
+                    arrayOfNoSuggested.push(i)
+                }
+                else
+                {
+                    arrayOfSuggestions.push(i)
+                }
+            }
+            for(var j=0;j<arrayOfNoSuggested.length;j++)
+            {
+                $('#'+arrayOfNoSuggested[j]).hide()
+            }
+            for(var k=0;k<arrayOfSuggestions.length;k++)
+            {
+                $('#'+arrayOfSuggestions[k]).show()
+            }
+        });
+
     </script>
 
 {% endblock %}
