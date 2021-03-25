@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserController extends AbstractController
 {
@@ -29,9 +30,7 @@ class UserController extends AbstractController
 				'users' => $session->get("users")
 				]);
 		}
-		return new Response(
-			'fooo'
-		);
+		throw new HttpException(400, "Problem with request.");
 	}
 
 	public function ajax(SessionInterface $session,Request $request)
@@ -56,9 +55,7 @@ class UserController extends AbstractController
 
 
 		}
-		return new Response(
-			'2'
-		);
+		throw new HttpException(400, "Update user is not valid.");
 	}
 
 }
